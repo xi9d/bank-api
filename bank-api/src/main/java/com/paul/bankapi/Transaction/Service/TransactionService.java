@@ -10,5 +10,5 @@ public interface TransactionService {
 
     Account withdrawAmount(Account account, Transaction transaction);
 
-    List<Transaction> getAllTransaction(Long accountId);
+    List<Transaction> getAllTransaction(Integer accountId);
 }

@@ -50,7 +50,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> getAllTransaction(Long accountId) {
+    public List<Transaction> getAllTransaction(Integer accountId) {
         Optional<Account> optionalAccount = accountService.findAccountById(accountId);
         return optionalAccount.map(Account::getTransactions).orElse(Collections.emptyList());
     }

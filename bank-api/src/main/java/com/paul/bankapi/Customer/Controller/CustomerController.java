@@ -1,44 +1,30 @@
 package com.paul.bankapi.Customer.Controller;
 
 import com.paul.bankapi.Customer.Model.Customer;
-import com.paul.bankapi.Customer.Service.CustomerService;
+import com.paul.bankapi.Customer.Repository.CustomerRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/customers")
+@RequestMapping("/api/v1/customer")
+@RequiredArgsConstructor
 @Api(tags = "Customer API")
 public class CustomerController {
+    private final CustomerRepository customerRepository;
 
-    private final CustomerService customerService;
-
-    @Autowired
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
-    }
-
-    @PostMapping
-    @ApiOperation(value = "Add a new customer", notes = "Add a new customer to the system")
-    public ResponseEntity<Customer> addCustomer(@RequestBody Customer customer) {
-        Customer _customer = customerService.addCustomer(customer);
-        return ResponseEntity.ok(_customer);
-    }
-
-    @DeleteMapping("/{id}")
-    @ApiOperation(value = "Remove a customer", notes = "Remove a customer from the system by ID")
-    public ResponseEntity<Map<String, Boolean>> removeCustomer(
-            @PathVariable @ApiParam(value = "Customer ID", example = "134") Long id
-    ) {
-        boolean delete = customerService.removeCustomerById(id);
-        Map<String, Boolean> results = new HashMap<>();
-        results.put("Deleted", delete);
-        return ResponseEntity.ok(results);
+    @ApiOperation(value = "Get Authenticated Customer Account", notes = "Retrieve the account details of the authenticated customer")
+    @GetMapping
+    public ResponseEntity<Customer> getAuthenticatedCustomerAccount(Authentication authentication) {
+        String email = authentication.getName();
+        Optional<Customer> optionalCustomer = customerRepository.findCustomerByEmail(email);
+        return optionalCustomer.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 }

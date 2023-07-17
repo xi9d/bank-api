@@ -17,20 +17,19 @@ public class CustomerServiceImpl implements CustomerService{
         return customerRepository.save(customer);
     }
 
+//    @Override
+//    public boolean removeCustomerById(Integer id) {
+//        Optional<Customer> optionalCustomer = customerRepository.findById(id);
+//        if (optionalCustomer.isPresent()){
+//            Customer customer = optionalCustomer.get();
+//            customerRepository.delete(customer);
+//            return true;
+//
+//        }
+//        return false;
+//    }
     @Override
-    public boolean removeCustomerById(Long id) {
-        Optional<Customer> optionalCustomer = customerRepository.findById(id);
-        if (optionalCustomer.isPresent()){
-            Customer customer = optionalCustomer.get();
-            customerRepository.delete(customer);
-            return true;
-
-        }
-        return false;
-    }
-
-    @Override
-    public Optional<Customer> findCustomerById(Long id) {
+    public Optional<Customer> findCustomerById(Integer id) {
         Optional<Customer> optionalCustomer = customerRepository.findById(id);
         if (optionalCustomer.isPresent()){
             Customer customer = optionalCustomer.get();
@@ -39,7 +38,11 @@ public class CustomerServiceImpl implements CustomerService{
         return Optional.empty();
     }
 
-
+    @Override
+    public Optional<Customer> getCustomerById(Integer id) {
+        Optional<Customer> optionalCustomer = customerRepository.findById(id);
+        return customerRepository.findById(id);
+    }
 
 //    @Override
 //    public Customer updateCustomer(Customer customer) {
