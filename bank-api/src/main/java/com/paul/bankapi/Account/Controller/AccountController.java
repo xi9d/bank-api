@@ -4,7 +4,9 @@ import com.paul.bankapi.Account.Model.Account;
 import com.paul.bankapi.Account.Service.AccountService;
 import com.paul.bankapi.Customer.Model.Customer;
 import com.paul.bankapi.Customer.Repository.CustomerRepository;
+import com.paul.bankapi.Customer.Service.CustomerService;
 import io.swagger.annotations.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,19 +19,13 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/customer/account")
+@RequestMapping("/api/v1/customer/{customerId}/account")
 @Api(tags = "Account API")
+@RequiredArgsConstructor
 public class AccountController {
 
-    private final CustomerRepository customerRepository;
-    private final AccountService accountService;
-
-    @Autowired
-    public AccountController(CustomerRepository customerRepository, AccountService accountService) {
-        this.customerRepository = customerRepository;
-        this.accountService = accountService;
-    }
-
+private final CustomerService customerService;
+private final AccountService accountService;
     @PostMapping("/create")
     @ApiOperation(value = "Create an account", notes = "Create a new account for the specified customer")
     @ApiResponses({
@@ -38,10 +34,9 @@ public class AccountController {
     })
     public ResponseEntity<Account> createAccount(
             @RequestBody @ApiParam(value = "Account details", required = true) Account account,
-            @ApiParam(hidden = true) Authentication authentication
+            @PathVariable Integer customerId
     ) {
-        String email = authentication.getName();
-        Optional<Customer> optionalCustomer = customerRepository.findCustomerByEmail(email);
+      Optional<Customer> optionalCustomer = customerService.findCustomerById(customerId);
         if (optionalCustomer.isPresent()) {
             optionalCustomer.get().setAccount(account);
             Account _account = accountService.addAccount(account, optionalCustomer.get().getId());
@@ -57,9 +52,8 @@ public class AccountController {
             @ApiResponse(code = 200, message = "Successfully retrieved the account balance", response = Integer.class),
             @ApiResponse(code = 404, message = "Customer not found")
     })
-    public ResponseEntity<Integer> getBalance(@ApiParam(hidden = true) @AuthenticationPrincipal Authentication authentication) {
-        String email = authentication.getName();
-        Optional<Customer> optionalCustomer = customerRepository.findCustomerByEmail(email);
+    public ResponseEntity<Integer> getBalance(@PathVariable Integer customerId) {
+        Optional<Customer> optionalCustomer = customerService.findCustomerById(customerId);
         if (optionalCustomer.isPresent()) {
             Customer customer = optionalCustomer.get();
             int balance = customer.getAccount().getBalance();
@@ -76,10 +70,9 @@ public class AccountController {
     })
     public ResponseEntity<Map<String, Boolean>> removeAccount(
             @PathVariable @ApiParam(value = "Account ID", example = "54321") Integer accountId,
-            @ApiParam(hidden = true) @AuthenticationPrincipal Authentication authentication
+            @PathVariable Integer customerId
     ) {
-        String email = authentication.getName();
-        Optional<Customer> optionalCustomer = customerRepository.findCustomerByEmail(email);
+        Optional<Customer> optionalCustomer = customerService.findCustomerById(customerId);
         if (optionalCustomer.isPresent()) {
             boolean deleteAccount = accountService.removeAccount(accountId, optionalCustomer.get().getId());
             Map<String, Boolean> results = new HashMap<>();

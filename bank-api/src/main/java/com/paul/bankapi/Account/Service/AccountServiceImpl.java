@@ -45,7 +45,7 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     public Optional<Account> findAccountById(Integer accountId) {
-        Optional<Account> optionalAccount = accountRepository.findById(accountId);
+        Optional<Account> optionalAccount = accountRepository.findAccountById(accountId);
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
             return Optional.of(account);
@@ -56,7 +56,17 @@ public class AccountServiceImpl implements AccountService{
     @Override
     public Account updateAccount(Account account) {
         Optional<Account> optionalAccount = accountRepository.findById(account.getId());
-        return optionalAccount.orElse(null);
+        if (optionalAccount.isPresent()){
+            Account _account = optionalAccount.get();
+            _account.setBalance(account.getBalance());
+            _account.setAccountName(account.getAccountName());
+            _account.setCustomer(account.getCustomer());
+            _account.setTransactions(account.getTransactions());
+            accountRepository.save(_account);
+            return _account;
+        }
+        return null;
+
     }
 
 

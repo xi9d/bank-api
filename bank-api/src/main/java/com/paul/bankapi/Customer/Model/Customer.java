@@ -47,8 +47,7 @@ public class Customer implements UserDetails {
     @ApiModelProperty(notes = "The PIN (password) of the customer")
     private String pin;
 
-    @ApiModelProperty(notes = "The customer ID in the format 'custXXX'")
-    private String customerId = "cust" + String.format("%03d", id);
+
 
     @Enumerated(EnumType.STRING)
     @ApiModelProperty(notes = "The role of the customer")
@@ -62,6 +61,18 @@ public class Customer implements UserDetails {
     @OneToMany(mappedBy = "customer")
     @ApiModelProperty(notes = "The list of tokens associated with the customer")
     private List<Token> token;
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", pin='" + pin + '\'' +
+                ", role=" + role +
+                '}';
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

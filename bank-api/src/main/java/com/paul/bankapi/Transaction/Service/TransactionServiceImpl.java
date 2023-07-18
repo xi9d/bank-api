@@ -18,11 +18,12 @@ public class TransactionServiceImpl implements TransactionService {
     private final AccountService accountService;
     private final TransactionRepository transactionRepository;
 
+
     @Override
     public Account depositAmount(Account account, Transaction transaction) {
         transaction.setTransactionType(TransactionType.DEPOSIT);
         account.setBalance(account.getBalance() + transaction.getAmount());
-        account.addTransaction(transaction); // Assuming addTransaction() method adds the transaction to the account's list.
+        account.addTransaction(transaction);
         System.out.println(account.getBalance());
         Account _account = accountService.updateAccount(account);
         transactionRepository.save(transaction);

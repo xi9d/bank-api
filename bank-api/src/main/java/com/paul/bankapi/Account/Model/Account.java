@@ -33,10 +33,7 @@ public class Account {
     private String accountName;
 
     @ApiModelProperty(value = "Account balance", example = "5000")
-    private Integer balance;
-
-    @ApiModelProperty(value = "Account reference ID", example = "acc001")
-    private String accountRefID;
+    private Integer balance = 0;
 
     @OneToOne(targetEntity = Customer.class)
     @JsonIgnore
@@ -55,8 +52,6 @@ public class Account {
                 "id=" + id +
                 ", accountName='" + accountName + '\'' +
                 ", balance=" + balance +
-                ", accountRefID='" + accountRefID + '\'' +
-                ", customer=" + customer +
                 '}';
     }
 
